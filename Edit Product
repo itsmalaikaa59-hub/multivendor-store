@@ -1,0 +1,34 @@
+<?php
+include '../db.php';
+
+if(!isset($_SESSION['user_id']) || $_SESSION['role']!='vendor'){
+    header("Location: ../login.php");
+    exit;
+}
+
+$id=$_GET['id'];
+
+$stmt=$conn->prepare("SELECT * FROM products WHERE id=?");
+$stmt->execute([$id]);
+$product=$stmt->fetch(PDO::FETCH_ASSOC);
+
+if($_SERVER['REQUEST_METHOD']=='POST'){
+    $name=$_POST['name'];
+    $description=$_POST['description'];
+    $price=$_POST['price'];
+
+    $update=$conn->prepare("UPDATE products SET name=?,description=?,price=? WHERE id=?");
+    $update->execute([$name,$description,$price,$id]);
+
+    header("Location: dashboard.php");
+}
+?>
+
+<h2>Edit Product</h2>
+
+<form method="post">
+Name: <input type="text" name="name" value="<?= $product['name'] ?>"><br>
+Description: <textarea name="description"><?= $product['description'] ?></textarea><br>
+Price: <input type="number" name="price" step="0.01" value="<?= $product['price'] ?>"><br>
+<input type="submit" value="Update Product">
+</form>
