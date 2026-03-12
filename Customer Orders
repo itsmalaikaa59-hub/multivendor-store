@@ -1,0 +1,32 @@
+<?php
+include '../db.php';
+
+if(!isset($_SESSION['user_id'])){
+header("Location: ../login.php");
+}
+
+$stmt=$conn->prepare("SELECT * FROM orders WHERE customer_id=?");
+$stmt->execute([$_SESSION['user_id']]);
+$orders=$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+echo "<h2>My Orders</h2>";
+
+foreach($orders as $order){
+
+echo "<h3>Order ID: ".$order['id']."</h3>";
+
+$items=$conn->prepare("
+SELECT products.name,order_items.quantity,order_items.price
+FROM order_items
+JOIN products ON order_items.product_id=products.id
+WHERE order_items.order_id=?
+");
+
+$items->execute([$order['id']]);
+
+foreach($items as $item){
+
+echo "<p>".$item['name']." | Qty: ".$item['quantity']." | Price: ".$item['price']."</p>";
+}
+}
+?>
