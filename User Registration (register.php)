@@ -1,0 +1,30 @@
+<?php
+include 'db.php';
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $role = $_POST['role'];
+
+    $stmt = $conn->prepare("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)");
+    if ($stmt->execute([$name, $email, $password, $role])) {
+        echo "Registered successfully! <a href='login.php'>Login</a>";
+    } else {
+        echo "Error registering user.";
+    }
+}
+?>
+
+<h2>Register</h2>
+<form method="post">
+    Name: <input type="text" name="name" required><br>
+    Email: <input type="email" name="email" required><br>
+    Password: <input type="password" name="password" required><br>
+    Role: 
+    <select name="role">
+        <option value="vendor">Vendor</option>
+        <option value="customer">Customer</option>
+    </select><br>
+    <input type="submit" value="Register">
+</form>
