@@ -1,0 +1,25 @@
+multivendor_store/
+│
+├── db.php                # Database connection
+├── index.php             # Customer product listing
+├── register.php          # User registration
+├── login.php             # User login
+├── logout.php            # Logout
+│
+├── vendor/
+│   ├── dashboard.php     # Vendor dashboard (list products)
+│   ├── add_product.php   # Add new product
+│   ├── edit_product.php  # Edit product
+│
+├── cart/
+│   ├── cart.php          # View cart
+│   ├── add_to_cart.php   # Add product to cart
+│   ├── checkout.php      # Checkout page
+│
+├── orders/
+│   ├── my_orders.php     # Customer order history
+│
+├── css/
+│   └── style.css         # Basic styling
+│
+└── README.md             # Project description
