@@ -1,0 +1,29 @@
+<?php
+include '../db.php';
+if(!isset($_SESSION['user_id']) || $_SESSION['role'] != 'vendor'){
+    header("Location: ../login.php"); exit;
+}
+
+$vendor_id = $_SESSION['user_id'];
+$stmt = $conn->prepare("SELECT * FROM products WHERE vendor_id=?");
+$stmt->execute([$vendor_id]);
+$products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+
+<h2>Welcome, <?= $_SESSION['name'] ?></h2>
+<a href="add_product.php">Add Product</a> | <a href="../logout.php">Logout</a>
+
+<h3>Your Products</h3>
+<table border="1" cellpadding="5">
+<tr><th>ID</th><th>Name</th><th>Price</th><th>Actions</th></tr>
+<?php foreach($products as $p): ?>
+<tr>
+    <td><?= $p['id'] ?></td>
+    <td><?= $p['name'] ?></td>
+    <td><?= $p['price'] ?></td>
+    <td>
+        <a href="edit_product.php?id=<?= $p['id'] ?>">Edit</a>
+    </td>
+</tr>
+<?php endforeach; ?>
+</table>
