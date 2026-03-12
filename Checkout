@@ -1,0 +1,42 @@
+<?php
+include '../db.php';
+
+if(!isset($_SESSION['user_id'])){
+    echo "Please login first.";
+    exit;
+}
+
+$cart=$_SESSION['cart'] ?? [];
+
+$total=0;
+
+foreach($cart as $product_id=>$qty){
+
+$stmt=$conn->prepare("SELECT * FROM products WHERE id=?");
+$stmt->execute([$product_id]);
+$product=$stmt->fetch(PDO::FETCH_ASSOC);
+
+$total+=$product['price']*$qty;
+}
+
+$order=$conn->prepare("INSERT INTO orders (customer_id,total) VALUES (?,?)");
+$order->execute([$_SESSION['user_id'],$total]);
+
+$order_id=$conn->lastInsertId();
+
+foreach($cart as $product_id=>$qty){
+
+$stmt=$conn->prepare("SELECT * FROM products WHERE id=?");
+$stmt->execute([$product_id]);
+$product=$stmt->fetch(PDO::FETCH_ASSOC);
+
+$item=$conn->prepare("INSERT INTO order_items (order_id,product_id,quantity,price) VALUES (?,?,?,?)");
+
+$item->execute([$order_id,$product_id,$qty,$product['price']]);
+}
+
+unset($_SESSION['cart']);
+
+echo "<h2>Order placed successfully!</h2>";
+echo "<a href='../index.php'>Back to shop</a>";
+?>
